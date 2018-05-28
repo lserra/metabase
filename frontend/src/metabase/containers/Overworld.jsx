@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { t } from "c-3po";
 
 import CollectionItemsLoader from "metabase/containers/CollectionItemsLoader";
+import CandidateListLoader from "metabase/containers/CandidateListLoader";
 import { DatabaseListLoader } from "metabase/components/BrowseApp";
 
 import * as Urls from "metabase/lib/urls";
@@ -33,51 +34,73 @@ class Overworld extends React.Component {
         <Box my={3}>
           <Subhead>{Greeting.sayHello(this.props.user.first_name)}</Subhead>
         </Box>
-        <Box mt={3} mb={1}>
-          <h4>{t`Pinned dashboards`}</h4>
-        </Box>
         <CollectionItemsLoader collectionId="root">
           {({ dashboards }) => {
             let pinnedDashboards = dashboards.filter(
               d => d.collection_position,
             );
+
+            if (!pinnedDashboards.length > 0) {
+              return (
+                <CandidateListLoader databaseId={1}>
+                  {({ candidates, sampleCandidates, isSample }) => {
+                    console.log(candidates, sampleCandidates);
+                    if (!candidates) {
+                      <Box>Hey?</Box>;
+                    }
+                    return (
+                      <Box>
+                        {candidates &&
+                          candidates.map(c => <Box>{c.display_name}</Box>)}
+                      </Box>
+                    );
+                  }}
+                </CandidateListLoader>
+              );
+            }
+
             return (
-              <Grid w={1 / 3}>
-                {pinnedDashboards.map(pin => {
-                  return (
-                    <GridItem>
-                      <Link
-                        to={Urls.dashboard(pin.id)}
-                        hover={{ color: normal.blue }}
-                      >
-                        <Card hoverable p={3}>
-                          <Icon
-                            name="dashboard"
-                            color={normal.blue}
-                            mb={2}
-                            size={28}
-                          />
-                          <Box mt={1}>
-                            <h3>{pin.name}</h3>
-                          </Box>
-                        </Card>
-                      </Link>
-                    </GridItem>
-                  );
-                })}
-                <GridItem>
-                  <Link
-                    to="/collection/root"
-                    color={normal.grey2}
-                    hover={{ color: normal.blue }}
-                  >
-                    <Flex p={4} align="center">
-                      <h3>See more items</h3>
-                      <Icon name="chevronright" size={14} ml={1} />
-                    </Flex>
-                  </Link>
-                </GridItem>
-              </Grid>
+              <Box>
+                <Box mt={3} mb={1}>
+                  <h4>{t`Pinned dashboards`}</h4>
+                </Box>
+                <Grid w={1 / 3}>
+                  {pinnedDashboards.map(pin => {
+                    return (
+                      <GridItem>
+                        <Link
+                          to={Urls.dashboard(pin.id)}
+                          hover={{ color: normal.blue }}
+                        >
+                          <Card hoverable p={3}>
+                            <Icon
+                              name="dashboard"
+                              color={normal.blue}
+                              mb={2}
+                              size={28}
+                            />
+                            <Box mt={1}>
+                              <h3>{pin.name}</h3>
+                            </Box>
+                          </Card>
+                        </Link>
+                      </GridItem>
+                    );
+                  })}
+                  <GridItem>
+                    <Link
+                      to="/collection/root"
+                      color={normal.grey2}
+                      hover={{ color: normal.blue }}
+                    >
+                      <Flex p={4} align="center">
+                        <h3>See more items</h3>
+                        <Icon name="chevronright" size={14} ml={1} />
+                      </Flex>
+                    </Link>
+                  </GridItem>
+                </Grid>
+              </Box>
             );
           }}
         </CollectionItemsLoader>
