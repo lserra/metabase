@@ -63,7 +63,6 @@ const SearchWrapper = Flex.extend`
       props.active ? ActiveSearchColor : DefaultSearchColor};
   border-radius: 6px;
   align-items: center;
-  color: white;
   border: 1px solid ${props => (props.active ? "#4894d8" : "transparent")};
   transition: background 300ms ease-in;
   &:hover {
@@ -116,6 +115,7 @@ class SearchBar extends React.Component {
         <SearchWrapper
           onClick={() => this.setState({ active: true })}
           active={this.state.active}
+          color="white"
         >
           <Icon name="search" ml={2} />
           <SearchInput
@@ -240,16 +240,10 @@ export default class Navbar extends Component {
 
   renderMainNav() {
     return (
-      <Flex className="relative bg-brand text-white z4" align="center">
-        <Box>
-          <Link
-            to="/"
-            data-metabase-event={"Navbar;Logo"}
-            className="LogoNavItem NavItem cursor-pointer relative z2 flex align-center transition-background justify-center"
-          >
-            <LogoIcon dark />
-          </Link>
-        </Box>
+      <Flex bg="primary" color="white" align="center" className="relative">
+        <Link to="/" data-metabase-event={"Navbar;Logo"} className="z2">
+          <LogoIcon dark />
+        </Link>
         <Flex
           className="absolute top left right bottom z1"
           px={4}
